@@ -6,7 +6,7 @@
   // writes a gitignored `wrangler.local.jsonc` with real ids (the build prefers it).
   // SaaS mode uses a separate gitignored `wrangler.saas.jsonc`.
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "openinspection",
+  "name": "summit-inspect",
   "main": "./workers/app.ts",
   "compatibility_date": "2026-05-22",
   "compatibility_flags": ["nodejs_compat"],
@@ -28,7 +28,7 @@
     "APP_MODE": "standalone",
     "TURNSTILE_SITE_KEY": "1x00000000000000000000AA",
     "SINGLE_TENANT_ID": "00000000-0000-0000-0000-000000000000",
-    "JWT_CURRENT_KID": "v1"
+    "JWT_CURRENT_KID": "v2"
   },
   "d1_databases": [
     {
