@@ -42,7 +42,7 @@
     { "binding": "TENANT_CACHE", "id": "016dc15ae300471b9a7194db0f23ddc0" },
     // OAUTH_KV: hardcoded binding name required by @cloudflare/workers-oauth-provider.
     // Placeholder id — replaced by a real provisioned KV id in wrangler.local.jsonc / wrangler.saas.jsonc.
-    { "binding": "OAUTH_KV", "id": "00000000000000000000000000000001" }
+    { "binding": "OAUTH_KV", "id": "ec387d89913a4ebea2efa972a8e342ae" }
   ],
   "r2_buckets": [
     { "binding": "PHOTOS", "bucket_name": "openinspection-media" }
