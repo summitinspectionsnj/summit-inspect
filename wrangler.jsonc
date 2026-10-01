@@ -34,18 +34,18 @@
     {
       "binding": "DB",
       "database_name": "openinspection-db",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "b869aac2-b652-4112-aec1-cb126c72bfb4",
       "migrations_dir": "migrations"
     }
   ],
   "kv_namespaces": [
-    { "binding": "TENANT_CACHE", "id": "00000000000000000000000000000000" },
+    { "binding": "TENANT_CACHE", "id": "016dc15ae300471b9a7194db0f23ddc0" },
     // OAUTH_KV: hardcoded binding name required by @cloudflare/workers-oauth-provider.
     // Placeholder id — replaced by a real provisioned KV id in wrangler.local.jsonc / wrangler.saas.jsonc.
     { "binding": "OAUTH_KV", "id": "00000000000000000000000000000001" }
   ],
   "r2_buckets": [
-    { "binding": "PHOTOS", "bucket_name": "openinspection-photos" }
+    { "binding": "PHOTOS", "bucket_name": "openinspection-media" }
   ],
   // Commercial PCA Phase W — async .docx export. Unlike the SaaS-only cmd/sync
   // queues (which live solely in the gitignored wrangler.saas.jsonc, since
