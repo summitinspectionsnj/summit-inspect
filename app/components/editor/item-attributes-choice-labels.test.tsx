@@ -82,24 +82,39 @@ describe("ItemAttributesPanel — the inspector reads the label, the form gets t
     expect((screen.getByLabelText("Other (explain)") as HTMLInputElement).checked).toBe(false);
   });
 
-  it("puts the value on a select's option and the label in its text", () => {
+  it("makes a short select vocabulary one-tap while still storing the VALUE", () => {
     const onChange = vi.fn();
     render(
       <ItemAttributesPanel itemId="i1" attributes={[PANEL_TYPE]} values={{}} onChange={onChange} />
     );
-    const option = screen.getByText("Circuit breaker") as HTMLOptionElement;
-    expect(option.value).toBe("circuit_breaker");
-    fireEvent.change(screen.getByRole("combobox"), { target: { value: "fuse" } });
+    fireEvent.click(screen.getByRole("button", { name: "Fuse" }));
     expect(onChange).toHaveBeenCalledWith("i1", "type", "fuse");
   });
 
-  it("leaves a bare-string option meaning value and label are the same word", () => {
+  it("leaves a bare-string quick choice meaning value and label are the same word", () => {
     const onChange = vi.fn();
     render(
       <ItemAttributesPanel itemId="i1" attributes={[LEGACY]} values={{}} onChange={onChange} />
     );
-    expect((screen.getByText("Natural gas") as HTMLOptionElement).value).toBe("Natural gas");
-    fireEvent.change(screen.getByRole("combobox"), { target: { value: "Electric" } });
+    fireEvent.click(screen.getByRole("button", { name: "Electric" }));
     expect(onChange).toHaveBeenCalledWith("i1", "fuel", "Electric");
+  });
+
+  it("keeps long imported SmartText choices in a dropdown instead of a wall of buttons", () => {
+    const onChange = vi.fn();
+    const longChoice: ItemAttribute = {
+      id: "narrative",
+      name: "Narrative",
+      type: "select",
+      choices: [
+        "This is a deliberately long imported narrative choice that belongs in the dropdown.",
+        "Another long narrative choice that would be awkward as a field button.",
+      ],
+    };
+    render(
+      <ItemAttributesPanel itemId="i1" attributes={[longChoice]} values={{}} onChange={onChange} />
+    );
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: longChoice.choices![1] as string } });
+    expect(onChange).toHaveBeenCalledWith("i1", "narrative", longChoice.choices![1]);
   });
 });
