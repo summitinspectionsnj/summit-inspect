@@ -5,10 +5,12 @@ import type { AdapterInspection, BundleResult, MigrationAdapter } from './types'
 import { csvGenericAdapter, type CsvContactMapping, type CsvMemberMapping } from './csv-generic';
 import { homeInspectorProAdapter } from './home-inspector-pro';
 import { spectoraAdapter } from './spectora';
+import { threeDAdapter } from './three-d';
 import {
     CONTAINER_VENDORS,
     TABULAR_VENDOR,
     isZipContainer,
+    XML_TEMPLATE_VENDORS,
     type IntakeSource,
 } from './source';
 
@@ -117,6 +119,7 @@ export const ADAPTER_VENDORS: Readonly<Partial<Record<VendorId, AdapterIdentity>
     spectora: spectoraAdapter,
     home_inspector_pro: homeInspectorProAdapter,
     csv_generic: csvGenericAdapter,
+    three_d: threeDAdapter,
 };
 
 /** A file that is not what the operator said it was, and what it looks like instead. */
@@ -171,6 +174,11 @@ function asJsonDocument(text: string): { value: unknown } | null {
  */
 function recognises(vendor: VendorId, source: IntakeSource): boolean {
     if (CONTAINER_VENDORS.includes(vendor)) return isZipContainer(source);
+    if (XML_TEMPLATE_VENDORS.includes(vendor)) {
+        if (isZipContainer(source)) return false;
+        const text = source.text().trimStart();
+        return text.startsWith('<?xml') || text.startsWith('<template');
+    }
     if (vendor === TABULAR_VENDOR) {
         return !isZipContainer(source) && asJsonDocument(source.text()) === null;
     }
@@ -343,7 +351,7 @@ export async function buildBundle(
     source: IntakeSource,
     mapping: IntakeMapping,
 ): Promise<BundleResult> {
-    if (CONTAINER_VENDORS.includes(vendor)) {
+    if (CONTAINER_VENDORS.includes(vendor) || XML_TEMPLATE_VENDORS.includes(vendor)) {
         if (mapping.kind !== 'template') {
             return {
                 ok: false,
@@ -357,6 +365,9 @@ export async function buildBundle(
         // file that is not that vendor's export is refused with the adapter's
         // own sentence rather than with a second one written here that could
         // disagree with it.
+        if (vendor === 'three_d') {
+            return threeDAdapter.convert(source.text(), { name: mapping.name });
+        }
         if (vendor === 'home_inspector_pro') {
             return homeInspectorProAdapter.convert(source.bytes, {
                 name: mapping.name,
