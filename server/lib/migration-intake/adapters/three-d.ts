@@ -162,12 +162,18 @@ function build(parsed: ParsedHt4): { template: TemplateSchemaV2; stats: ConvertS
             if (!sourceItem) continue;
             const information: CannedInfoComment[] = [];
             const attributeNumbers = new Set<string>();
+            const attributeLabels = new Map<string, string>();
             for (const commentId of sourceItem.commentIds) {
                 const sourceComment = parsed.comments.get(commentId);
                 if (!sourceComment) continue;
                 const numbers = smartTextNumbers(sourceComment.text);
                 if (numbers.length > 0) smartTextComments++;
-                for (const number of numbers) attributeNumbers.add(number);
+                for (const number of numbers) {
+                    attributeNumbers.add(number);
+                    if (!attributeLabels.has(number) && sourceComment.name) {
+                        attributeLabels.set(number, sourceComment.name.replace(/:\\s*$/, '').trim());
+                    }
+                }
                 information.push({
                     id: 'ri_' + (++commentIndex),
                     title: sourceComment.name || 'Comment',
@@ -183,7 +189,7 @@ function build(parsed: ParsedHt4): { template: TemplateSchemaV2; stats: ConvertS
                     if (choices.length === 0) return [];
                     return [{
                         id: smartTextAttributeId(number),
-                        name: '3D choice',
+                        name: attributeLabels.get(number) || '3D choice',
                         type: 'select' as const,
                         choices,
                     }];
