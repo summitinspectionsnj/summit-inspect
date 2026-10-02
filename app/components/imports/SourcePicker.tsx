@@ -141,6 +141,7 @@ export function SourcePicker({
  * under Documents.
  */
 const VENDOR_NAME: Record<VendorId, () => string> = {
+    three_d: m.imports_source_vendor_three_d,
     spectora: m.imports_source_vendor_spectora,
     home_inspector_pro: m.imports_source_vendor_home_inspector_pro,
     homegauge: m.imports_source_vendor_homegauge,
@@ -148,6 +149,7 @@ const VENDOR_NAME: Record<VendorId, () => string> = {
 };
 
 const VENDOR_FILE: Record<VendorId, () => string> = {
+    three_d: m.imports_source_file_three_d,
     spectora: m.imports_source_file_spectora,
     home_inspector_pro: m.imports_source_file_home_inspector_pro,
     homegauge: m.imports_source_file_homegauge,
