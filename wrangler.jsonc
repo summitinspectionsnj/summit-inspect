@@ -13,6 +13,10 @@
   "assets": { "directory": "./build/client", "binding": "ASSETS" },
   "observability": { "enabled": true },
   "upload_source_maps": true,
+  // Large imported inspection templates can require more than the default 30s CPU
+  // budget while rendering/snapshotting. Paid Workers are billed for CPU actually
+  // used, not for this ceiling; Cloudflare allows up to 300,000 ms per request.
+  "limits": { "cpu_ms": 300000 },
   // Drives the scheduled() handler. Three expressions, not one:
   //   */5 * * * *  the main tick — probes each job and enqueues the ones with
   //                work onto CRON_QUEUE. It runs no job body itself.
