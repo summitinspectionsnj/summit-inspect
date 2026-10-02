@@ -22,9 +22,9 @@ import { VENDOR_IDS } from '../../server/lib/migration-intake/bundle';
 import { defaultImportSourceFor, importSourcesFor, sourceIsTabular } from './import-sources';
 
 describe('importSourcesFor', () => {
-    it('offers the three template products on the templates entry', () => {
+    it('offers the template products on the templates entry', () => {
         expect(importSourcesFor('templates.create').map((s) => s.vendor))
-            .toEqual(['spectora', 'home_inspector_pro', 'homegauge']);
+            .toEqual(['three_d', 'spectora', 'home_inspector_pro', 'homegauge']);
     });
 
     it('offers a spreadsheet, and only that, on the two people entries', () => {
