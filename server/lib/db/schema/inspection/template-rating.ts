@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer, uniqueIndex, index } from 'drizzle-orm/sqlite-core';
 import { tenants } from '../tenant';
+import { largeJson } from '../../large-value';
 
 // Sprint 2 S2-1 — tenant-scoped rating systems library. The level list
 // itself is stored as JSON because it is never queried independently and
@@ -36,7 +37,7 @@ export const templates = sqliteTable('templates', {
     // reading this column instead would silently re-derive a published report
     // from today's template. `server/services/inspection/shared.ts` is the only
     // sanctioned way to read an inspection's structure and never falls back here.
-    schema: text('schema', { mode: 'json' }).notNull(),
+    schema: largeJson('schema').notNull(),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
     // Sprint 2 S2-1 — selects the active rating system. Null = use tenant default.
     ratingSystemId: text('rating_system_id'),
