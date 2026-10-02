@@ -77,7 +77,7 @@ describe('the registry table', () => {
             .toEqual([
                 ['spectora', 'spectora'],
                 ['home_inspector_pro', 'home-inspector-pro'],
-                ['csv_generic', 'csv-generic'],
+                ['csv_generic', 'csv-generic'],\n                ['three_d', 'three-d-ht4'],
             ]);
         for (const [vendor, adapter] of Object.entries(ADAPTER_VENDORS)) {
             expect(adapter?.vendor).toBe(vendor);
