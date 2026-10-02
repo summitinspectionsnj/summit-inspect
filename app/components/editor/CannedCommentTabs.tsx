@@ -210,13 +210,17 @@ export function CannedCommentTabs({
               else if (typeof v === "boolean") attrVars[k] = v ? "yes" : "no";
               else attrVars[k] = null;
             }
+            // Attribute variables are useful on every canned-comment tab, not
+            // only defects. 3D SmartText imports use this native Mustache path:
+            // the inspector picks an item attribute and the Information
+            // narrative updates in place with no duplicate comment explosion.
             const vars = st ? {
               location:  st.location ?? null,
               trade:     st.trade     ? DEFECT_TRADE_LABELS[st.trade]         : null,
               deadline:  st.deadline  ? DEFECT_DEADLINE_LABELS[st.deadline]   : null,
               timeframe: st.timeframe ? DEFECT_TIMEFRAME_LABELS[st.timeframe] : null,
               ...attrVars,
-            } : null;
+            } : Object.keys(attrVars).length > 0 ? attrVars : null;
             return (
               <CannedCommentRow
                 key={entry.id}
