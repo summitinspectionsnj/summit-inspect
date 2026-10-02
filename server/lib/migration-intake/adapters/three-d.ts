@@ -97,15 +97,33 @@ function parseHt4(input: unknown): ParsedHt4 | null {
     return { sections, items, comments, smartText };
 }
 
-function preserveSmartText(text: string, smartText: Map<string, string[]>): string {
-    let used = false;
-    const replaced = text.replace(/\*SmartText(\d+)\*/g, (_whole, number: string) => {
+function smartTextAttributeId(number: string): string {
+    return 'smarttext_' + number;
+}
+
+function smartTextNumbers(text: string): string[] {
+    return [...new Set([...text.matchAll(/\\*SmartText(\\d+)\\*/g)].map((m) => m[1]!))];
+}
+
+/**
+ * OpenInspection already renders {{attribute_id}} variables in canned prose.
+ * Use that native mechanism instead of expanding every 3D SmartText option
+ * into a separate canned comment. One selection can therefore feed the
+ * narrative exactly where 3D put its SmartText insertion point.
+ */
+function smartTextTemplate(text: string, smartText: Map<string, string[]>): string {
+    let out = text;
+    for (const number of smartTextNumbers(text)) {
         const values = smartText.get('SmartText' + number) ?? [];
-        if (values.length === 0) return '';
-        used = true;
-        return '[3D choices: ' + values.join(' | ') + ']';
-    });
-    return used ? replaced.replace(/\[___\]/g, '').replace(/\s{2,}/g, ' ').trim() : replaced;
+        if (values.length === 0) continue;
+        const token = '{{' + smartTextAttributeId(number) + '}}';
+        const marker = new RegExp('\\\\*SmartText' + number + '\\\\*', 'g');
+        // 3D commonly stores an explicit [___] insertion point immediately
+        // before its SmartText marker. Collapse the pair to one native token.
+        out = out.replace(new RegExp('\\\\[___\\\\]\\\\s*\\\\*SmartText' + number + '\\\\*', 'g'), token);
+        out = out.replace(marker, token);
+    }
+    return out.replace(/\\s{2,}/g, ' ').trim();
 }
 
 function build(parsed: ParsedHt4): { template: TemplateSchemaV2; stats: ConvertStats; smartTextComments: number } {
@@ -126,24 +144,40 @@ function build(parsed: ParsedHt4): { template: TemplateSchemaV2; stats: ConvertS
             const sourceItem = parsed.items.get(itemId);
             if (!sourceItem) continue;
             const information: CannedInfoComment[] = [];
+            const attributeNumbers = new Set<string>();
             for (const commentId of sourceItem.commentIds) {
                 const sourceComment = parsed.comments.get(commentId);
                 if (!sourceComment) continue;
-                if (/\*SmartText\d+\*/.test(sourceComment.text)) smartTextComments++;
+                const numbers = smartTextNumbers(sourceComment.text);
+                if (numbers.length > 0) smartTextComments++;
+                for (const number of numbers) attributeNumbers.add(number);
                 information.push({
                     id: 'ri_' + (++commentIndex),
                     title: sourceComment.name || 'Comment',
-                    comment: preserveSmartText(sourceComment.text, parsed.smartText),
+                    comment: smartTextTemplate(sourceComment.text, parsed.smartText),
                     default: false,
                 });
                 stats.information++;
             }
+            const attributes: NonNullable<TemplateItem['attributes']> = [...attributeNumbers]
+                .sort((a, b) => Number(a) - Number(b))
+                .flatMap((number) => {
+                    const choices = parsed.smartText.get('SmartText' + number) ?? [];
+                    if (choices.length === 0) return [];
+                    return [{
+                        id: smartTextAttributeId(number),
+                        name: '3D choice',
+                        type: 'select' as const,
+                        choices,
+                    }];
+                });
             const item: TemplateItem = {
                 id: 'item_' + (++stats.items),
                 label: sourceItem.label.slice(0, 100),
                 type: 'rich',
                 ratingOptions: [...DEFAULT_IMPORTED_RATING_OPTIONS],
                 tabs: { information, limitations: [], defects: [] },
+                ...(attributes.length > 0 ? { attributes } : {}),
                 source: { platform: '3d_inspection_system', externalId: itemId },
             };
             section.items.push(item);
@@ -185,7 +219,7 @@ export const threeDAdapter: MigrationAdapter<ThreeDAdapterOptions> = {
         if (smartTextComments > 0) {
             warnings.push({
                 code: '3D_SMARTTEXT_PRESERVED',
-                message: smartTextComments + ' canned comments use 3D SmartText. Their source choices were preserved in the comment text while native selectable SmartText support is being added.',
+                message: smartTextComments + ' canned comments use 3D SmartText. They were mapped to native selectable item fields and linked into the canned narrative.',
             });
         }
         return {
