@@ -4,6 +4,7 @@ import { INSPECTION_STATUSES } from '../../../status/inspection-status';
 import { REPORT_STATUSES } from '../../../status/report-status';
 import { CANCELLATION_REASONS } from '../../../cancellation-reason';
 import { templates } from './template-rating';
+import { largeJson } from '../../large-value';
 import { discountCodes } from './services';
 
 export const inspections = sqliteTable('inspections', {
@@ -164,7 +165,7 @@ export const inspections = sqliteTable('inspections', {
     county:              text('county'),
     // Selling Agent — see inspection_people (sellingAgentId column DROPPED, superseded).
     disableAutomations:  integer('is_automations_disabled', { mode: 'boolean' }).notNull().default(false),
-    templateSnapshot:    text('template_snapshot', { mode: 'json' }),
+    templateSnapshot:    largeJson('template_snapshot'),
     templateSnapshotVersion: integer('template_snapshot_version').default(1),
     // Report Style Presets — per-inspection appearance profile override.
     // NULL = inherit template default, then tenant default, then 'signature'.
