@@ -102,7 +102,20 @@ function smartTextAttributeId(number: string): string {
 }
 
 function smartTextNumbers(text: string): string[] {
-    return [...new Set([...text.matchAll(/\\*SmartText(\\d+)\\*/g)].map((m) => m[1]!))];
+    const found = new Set<string>();
+    const prefix = '*SmartText';
+    let from = 0;
+    while (from < text.length) {
+        const start = text.indexOf(prefix, from);
+        if (start < 0) break;
+        const numberStart = start + prefix.length;
+        const end = text.indexOf('*', numberStart);
+        if (end < 0) break;
+        const number = text.slice(numberStart, end);
+        if (number.length > 0 && [...number].every((ch) => ch >= '0' && ch <= '9')) found.add(number);
+        from = end + 1;
+    }
+    return [...found];
 }
 
 /**
