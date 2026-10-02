@@ -2,6 +2,7 @@ import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core';
 import { MIGRATION_BATCH_STATUS, MIGRATION_BATCH_STATUSES } from '../../status/migration-batch-status';
 import { MIGRATION_ROW_STATUS, MIGRATION_ROW_STATUSES } from '../../status/migration-row-status';
 import { MIGRATION_ENTITY_KINDS } from '../../migration-intake/bundle';
+import { largeText } from '../large-value';
 
 /**
  * What the operator asked for, decided by the entry point they used rather
@@ -132,7 +133,7 @@ export const migrationRows = sqliteTable('migration_rows', {
     /** Index within the bundle's array for this entity kind — how a report names the entry. */
     position: integer('position').notNull(),
     /** The bundle entry, stringified once at stage time. */
-    payload: text('payload').notNull(),
+    payload: largeText('payload').notNull(),
     /** id of the existing row this one collides with; NULL = no collision. */
     conflictWith: text('conflict_with'),
     resolution: text('resolution', { enum: MIGRATION_ROW_RESOLUTIONS }),
@@ -158,7 +159,7 @@ export const migrationRows = sqliteTable('migration_rows', {
      * the wrong content. Without this column an undo of an overwrite is a
      * claim, not an operation.
      */
-    priorState: text('prior_state'),
+    priorState: largeText('prior_state'),
     appliedAt: integer('applied_at', { mode: 'timestamp_ms' }),
 }, (t) => [
     index('idx_migration_rows_batch_status').on(t.batchId, t.status),
