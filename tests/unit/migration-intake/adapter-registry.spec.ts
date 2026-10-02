@@ -38,6 +38,15 @@ const CONTACTS_CSV = [
     'Bob Ray,bob@example.test,"Beta, Inc."',
 ].join('\n');
 
+
+const THREE_D_HT4 = `<?xml version="1.0" encoding="UTF-8"?>
+<template version="3">
+  <st><stKey>SmartText1</stKey><stVal>Asphalt</stVal><stVal>Concrete</stVal></st>
+  <com id="C-1"><comName>MATERIAL:</comName><comText>The driveway was [___]. *SmartText1*</comText></com>
+  <ii id="II-1"><iiText>Driveway</iiText><iiCID>C-1</iiCID></ii>
+  <sec name="GROUNDS"><secIIID>II-1</secIIID></sec>
+</template>`;
+
 const HEADER = [
     'Section Name', 'Item Name', 'Comment Name', 'Comment Text',
     'Comment Type (info, limit, defect)',
@@ -152,6 +161,14 @@ describe('matchAdapter', () => {
     // operator's own declaration is what the file contradicts — which is what
     // makes a specific sentence possible. See `describeVendorMismatch` in
     // adapter-contract.spec.ts.
+    it('matches a 3D HT4 template as its declared vendor', async () => {
+        const source = intakeSourceFromText('1 DHI Checklist.ht4', THREE_D_HT4);
+        const match = await matchAdapter('templates.create', 'three_d', source);
+        expect(match?.vendor).toBe('three_d');
+        expect(match?.adapterName).toBe('three-d-ht4');
+        expect(match?.inspection).toMatchObject({ kind: 'template', sections: 1, items: 1 });
+    });
+
     it('does not match a spreadsheet declared as a template export', async () => {
         expect(await matchAdapter(
             'templates.create', 'spectora', intakeSourceFromText('contacts.csv', CONTACTS_CSV),
@@ -312,6 +329,19 @@ describe('buildBundle', () => {
         expect(result.ok).toBe(true);
         if (!result.ok) return;
         expect(result.bundle.templates[0]!.name).toBe('Imported residential');
+    });
+
+    it('builds a validating bundle directly from a 3D HT4 template', async () => {
+        const result = await buildBundle(
+            'three_d',
+            intakeSourceFromText('1 DHI Checklist.ht4', THREE_D_HT4),
+            { kind: 'template', name: 'Summit residential', ratingKind: 'severity' },
+        );
+        expect(result.ok).toBe(true);
+        if (!result.ok) return;
+        expect(parseMigrationBundle(result.bundle).ok).toBe(true);
+        const item = result.bundle.templates[0]?.schema.sections[0]?.items[0];
+        expect(item?.attributes?.[0]?.choices).toEqual(['Asphalt', 'Concrete']);
     });
 
     it('reports an unreadable file as a value rather than throwing', async () => {
