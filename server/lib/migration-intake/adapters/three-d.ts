@@ -131,9 +131,14 @@ function smartTextTemplate(text: string, smartText: Map<string, string[]>): stri
         if (values.length === 0) continue;
         const token = '{{' + smartTextAttributeId(number) + '}}';
         const marker = '*SmartText' + number + '*';
-        out = out.split(marker).join(token);
-        out = out.split('[___] ' + token).join(token);
-        out = out.split('[___]' + token).join(token);
+        // In 3D, [___] is the insertion point and the SmartText marker may sit
+        // later in the sentence as metadata. When both exist, fill the blank
+        // and remove the marker; otherwise the marker itself is the insertion.
+        if (out.includes('[___]') && out.includes(marker)) {
+            out = out.replace('[___]', token).split(marker).join('');
+        } else {
+            out = out.split(marker).join(token);
+        }
     }
     return out.replace(/\s{2,}/g, ' ').trim();
 }
