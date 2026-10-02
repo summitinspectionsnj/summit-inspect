@@ -26,7 +26,7 @@ describe('3D HT4 adapter', () => {
         expect(item?.tabs?.information[0]?.comment).toBe('The driveway was {{smarttext_1}}.');
         expect(item?.attributes).toEqual([{
             id: 'smarttext_1',
-            name: '3D choice',
+            name: 'MATERIAL',
             type: 'select',
             choices: ['Asphalt', 'Concrete'],
         }]);
