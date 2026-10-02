@@ -22,8 +22,14 @@ describe('3D HT4 adapter', () => {
         expect(template.name).toBe('Summit 3D');
         expect(template.schema.sections[0]?.title).toBe('GROUNDS');
         expect(template.schema.sections[0]?.items[0]?.label).toBe('Driveway');
-        expect(template.schema.sections[0]?.items[0]?.tabs?.information[0]?.comment)
-            .toContain('[3D choices: Asphalt | Concrete]');
+        const item = template.schema.sections[0]?.items[0];
+        expect(item?.tabs?.information[0]?.comment).toBe('The driveway was {{smarttext_1}}.');
+        expect(item?.attributes).toEqual([{
+            id: 'smarttext_1',
+            name: '3D choice',
+            type: 'select',
+            choices: ['Asphalt', 'Concrete'],
+        }]);
         expect(result.bundle.manifest.source.vendor).toBe('three_d');
     });
 
