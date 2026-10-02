@@ -157,7 +157,7 @@
   "imports_upload_authorize": "Keep this file so I can change the column mapping and come back to this page later.",
   "imports_upload_authorize_help": "We store it with your inspection files. It is deleted with this import.",
   "imports_upload_choose_file": "Choose file",
-  "imports_upload_hint": "CSV, Excel (.xlsx) or a template export (.json)",
+  "imports_upload_hint": "CSV, Excel (.xlsx), 3D template (.ht4), or a template export (.json)",
   "imports_upload_needs_authorize": "Agree to us keeping the file, so this import can be picked up again later.",
   "imports_upload_needs_file": "Choose the file you exported.",
   "imports_upload_needs_pdf_file": "Choose the PDF you printed.",
@@ -173,5 +173,7 @@
   "imports_wizard_step_preview": "Preview",
   "imports_wizard_step_repair": "Fix",
   "imports_wizard_step_upload": "Upload",
-  "imports_wizard_steps_aria": "Import steps"
+  "imports_wizard_steps_aria": "Import steps",
+  "imports_source_vendor_three_d": "3D Inspection System",
+  "imports_source_file_three_d": "The .ht4 template file exported from 3D Inspection System."
 }

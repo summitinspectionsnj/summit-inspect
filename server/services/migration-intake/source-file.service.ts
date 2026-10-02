@@ -13,9 +13,9 @@ import { r2Keys } from '../../lib/r2-keys';
 export type SourceExt = 'csv' | 'json' | 'bin';
 
 /**
- * Names whose bytes are certainly not text. Lower-cased before matching.
+ * Names stored as raw vendor-export bytes rather than flattened CSV. Lower-cased before matching.
  *
- * The test this list applies is NOT "can something here parse it". It is
+ * Most entries are binary containers; .ht4 is XML text but is still a vendor\n * template export and must use the vendor-export size cap rather than the CSV cap.\n * The test this list applies is NOT "can something here parse it". It is
  * narrower and it is the only one a name can answer: would decoding these bytes
  * as UTF-8 destroy them. A format nothing here reads still belongs on the list —
  * it is kept whole, filed as `bin`, and routed to the assisted path with its
@@ -41,7 +41,7 @@ export type SourceExt = 'csv' | 'json' | 'bin';
  */
 const BINARY_SUFFIXES = [
     '.xls', '.xlsx', '.xlsm', '.xlsb', '.ods', '.numbers',
-    '.tpz', '.tpx', '.tpzx', '.hgf', '.zip', '.pdf',
+    '.tpz', '.tpx', '.tpzx', '.hgf', '.ht4', '.zip', '.pdf',
 ];
 
 /**

@@ -245,7 +245,7 @@ export function StartImportPanel({
                 data-testid="import-start-file"
                 type="file"
                 name="file"
-                accept={needsPdf ? "application/pdf,.pdf" : ".csv,.xlsx,.json"}
+                accept={needsPdf ? "application/pdf,.pdf" : ".csv,.xlsx,.json,.ht4"}
                 className="sr-only"
                 onChange={(e) => onFileChosen(e.currentTarget.files?.[0] ?? null)}
             />

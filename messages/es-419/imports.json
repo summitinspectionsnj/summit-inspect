@@ -157,7 +157,7 @@
   "imports_upload_authorize": "Conservar este archivo para poder cambiar la asignación de columnas y volver a esta página más tarde.",
   "imports_upload_authorize_help": "Lo guardamos junto con sus archivos de inspección. Se elimina junto con esta importación.",
   "imports_upload_choose_file": "Elegir archivo",
-  "imports_upload_hint": "CSV, Excel (.xlsx) o una exportación de plantilla (.json)",
+  "imports_upload_hint": "CSV, Excel (.xlsx), plantilla de 3D (.ht4) o una exportación de plantilla (.json)",
   "imports_upload_needs_authorize": "Acepte que conservemos el archivo, para poder retomar esta importación más tarde.",
   "imports_upload_needs_file": "Elija el archivo que exportó.",
   "imports_upload_needs_pdf_file": "Elija el PDF que imprimió.",
@@ -173,5 +173,7 @@
   "imports_wizard_step_preview": "Vista previa",
   "imports_wizard_step_repair": "Corregir",
   "imports_wizard_step_upload": "Subir",
-  "imports_wizard_steps_aria": "Pasos de la importación"
+  "imports_wizard_steps_aria": "Pasos de la importación",
+  "imports_source_vendor_three_d": "3D Inspection System",
+  "imports_source_file_three_d": "El archivo de plantilla .ht4 exportado desde 3D Inspection System."
 }

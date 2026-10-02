@@ -63,6 +63,7 @@ export interface ImportSourceOption {
  * be given if he can say what he has.
  */
 const TEMPLATE_SOURCES: readonly ImportSourceOption[] = [
+    { vendor: 'three_d', readHere: true, tabular: false },
     { vendor: 'spectora', readHere: true, tabular: false },
     { vendor: 'home_inspector_pro', readHere: true, tabular: false },
     { vendor: 'homegauge', readHere: false, tabular: false },

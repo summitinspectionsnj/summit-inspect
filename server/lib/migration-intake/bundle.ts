@@ -18,7 +18,7 @@ export type EntityKind = typeof MIGRATION_ENTITY_KINDS[number];
  * never matches on it, because the entry point the operator used already
  * states what they meant and a guess has a case it gets wrong.
  */
-export const VENDOR_IDS = ['spectora', 'csv_generic', 'home_inspector_pro', 'homegauge'] as const;
+export const VENDOR_IDS = ['spectora', 'csv_generic', 'home_inspector_pro', 'homegauge', 'three_d'] as const;
 export type VendorId = typeof VENDOR_IDS[number];
 
 /**

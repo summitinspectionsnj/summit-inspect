@@ -74,7 +74,7 @@ describe('extForFileName', () => {
         expect(extForFileName('contacts.tsv')).toBe('csv');
     });
 
-    it('reads a binary workbook as bin whatever the workbook dialect', () => {
+    it('stores vendor exports as bin/raw, including HT4 and workbook containers', () => {
         // The list is not "the formats we can parse" — it is "the names whose
         // bytes are certainly not text". Getting one wrong is not a failed
         // parse: the file is filed as `source.csv`, stamped `text/csv`, and
@@ -85,6 +85,9 @@ describe('extForFileName', () => {
         expect(extForFileName('clients.XLSB')).toBe('bin');
         expect(extForFileName('contacts.ods')).toBe('bin');
         expect(extForFileName('Contact List.numbers')).toBe('bin');
+        // HT4 is XML text, but it is a complete vendor template export and
+        // must use the vendor-export cap rather than the smaller CSV cap.
+        expect(extForFileName('1 DHI Checklist.ht4')).toBe('bin');
     });
 
     it('still reads the text formats as text — the control for the list above', () => {

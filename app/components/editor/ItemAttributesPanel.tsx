@@ -68,23 +68,55 @@ export function ItemAttributesPanel({ itemId, attributes, values, onChange }: It
                     );
                 }
                 if (attr.type === 'select') {
+                    const choices = attr.choices ?? [];
+                    // Short, small vocabularies are faster as tap targets in
+                    // the field. Long SmartText narratives stay in a dropdown
+                    // so an imported library never turns into a wall of buttons.
+                    const quickChoices = choices.length > 0
+                        && choices.length <= 6
+                        && choices.every((choice) => choiceLabel(choice).length <= 32);
                     return (
-                        <div key={key} className="col-span-6 md:col-span-3">
+                        <div key={key} className={quickChoices ? "col-span-12 md:col-span-6" : "col-span-6 md:col-span-3"}>
                             <label className="block font-bold uppercase tracking-[0.1em] text-ih-fg-3 mb-0.5">{attr.name}</label>
-                            <select
-                                value={typeof v === 'string' ? v : ''}
-                                onChange={e => onChange(itemId, attr.id, e.target.value || null)}
-                                className="w-full px-2 py-1 rounded border border-ih-border bg-ih-bg-app text-ih-fg-1"
-                            >
-                                <option value="">—</option>
-                                {/* `value` is the option's VALUE and `label` is
-                                    only its text: what a change event carries
-                                    is `e.target.value`, so the form still
-                                    receives the token it matches on. */}
-                                {(attr.choices ?? []).map(c => (
-                                    <option key={choiceValue(c)} value={choiceValue(c)}>{choiceLabel(c)}</option>
-                                ))}
-                            </select>
+                            {quickChoices ? (
+                                <div className="flex flex-wrap gap-1.5" role="group" aria-label={attr.name}>
+                                    {choices.map((choice) => {
+                                        const value = choiceValue(choice);
+                                        const selected = v === value;
+                                        return (
+                                            <button
+                                                key={value}
+                                                type="button"
+                                                aria-pressed={selected}
+                                                onClick={() => onChange(itemId, attr.id, selected ? null : value)}
+                                                className={
+                                                    "min-h-9 rounded border px-3 py-1.5 text-[12px] font-semibold transition-colors "
+                                                    + (selected
+                                                        ? "border-ih-primary bg-ih-primary text-white"
+                                                        : "border-ih-border bg-ih-bg-card text-ih-fg-2 hover:bg-ih-bg-muted")
+                                                }
+                                            >
+                                                {choiceLabel(choice)}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <select
+                                    value={typeof v === 'string' ? v : ''}
+                                    onChange={e => onChange(itemId, attr.id, e.target.value || null)}
+                                    className="w-full px-2 py-1 rounded border border-ih-border bg-ih-bg-app text-ih-fg-1"
+                                >
+                                    <option value="">—</option>
+                                    {/* `value` is the option's VALUE and `label` is
+                                        only its text: what a change event carries
+                                        is `e.target.value`, so the form still
+                                        receives the token it matches on. */}
+                                    {choices.map(c => (
+                                        <option key={choiceValue(c)} value={choiceValue(c)}>{choiceLabel(c)}</option>
+                                    ))}
+                                </select>
+                            )}
                         </div>
                     );
                 }

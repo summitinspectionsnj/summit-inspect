@@ -70,6 +70,9 @@ export const CONTAINER_VENDORS: readonly VendorId[] = ['spectora', 'home_inspect
  */
 export const TABULAR_VENDOR: VendorId = 'csv_generic';
 
+/** 3D Inspection System .ht4 templates are XML text, not zip containers. */
+export const XML_TEMPLATE_VENDORS: readonly VendorId[] = ['three_d'];
+
 /**
  * Whether the bytes are a zip archive.
  *
