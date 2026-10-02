@@ -117,13 +117,12 @@ function smartTextTemplate(text: string, smartText: Map<string, string[]>): stri
         const values = smartText.get('SmartText' + number) ?? [];
         if (values.length === 0) continue;
         const token = '{{' + smartTextAttributeId(number) + '}}';
-        const marker = new RegExp('\\\\*SmartText' + number + '\\\\*', 'g');
-        // 3D commonly stores an explicit [___] insertion point immediately
-        // before its SmartText marker. Collapse the pair to one native token.
-        out = out.replace(new RegExp('\\\\[___\\\\]\\\\s*\\\\*SmartText' + number + '\\\\*', 'g'), token);
-        out = out.replace(marker, token);
+        const marker = '*SmartText' + number + '*';
+        out = out.split(marker).join(token);
+        out = out.split('[___] ' + token).join(token);
+        out = out.split('[___]' + token).join(token);
     }
-    return out.replace(/\\s{2,}/g, ' ').trim();
+    return out.replace(/\s{2,}/g, ' ').trim();
 }
 
 function build(parsed: ParsedHt4): { template: TemplateSchemaV2; stats: ConvertStats; smartTextComments: number } {
